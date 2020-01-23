@@ -27,10 +27,10 @@ export const TodoSchema = new Schema({
     default: false,
   },
   urgency: {
-    type: String,
+    type: Number,
     required: true,
-    enum: ['low', 'medium', 'high', 'none'],
-    default: 'none',
+    min: 0,
+    max: 3,
   },
   text: {
     type: String,
