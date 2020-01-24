@@ -12,10 +12,9 @@ import { UserController } from './user/user.controller';
   imports: [MongooseModule.forRoot('mongodb://localhost:27017/todo-app-dev'), TodoModule],
   controllers: [
     AppController,
-    UserController,
     // UsersController,
     // ListsController,
   ],
-  providers: [AppService, UserService],
+  providers: [AppService],
 })
 export class AppModule { }

@@ -6,6 +6,9 @@ import { TodoService } from './todo.service';
 import { ListSchema } from 'src/schemas/list.schema';
 import { ListController } from 'src/list/list.controller';
 import { ListService } from 'src/list/list.service';
+import { UserSchema } from 'src/schemas/user.schema';
+import { UserController } from 'src/user/user.controller';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [
@@ -14,10 +17,12 @@ import { ListService } from 'src/list/list.service';
         name: 'Todo', schema: TodoSchema,
       }, {
         name: 'List', schema: ListSchema,
+      }, {
+        name: 'User', schema: UserSchema,
       }
     ]),
   ],
-  controllers: [TodoController, ListController],
-  providers: [TodoService, ListService],
+  controllers: [TodoController, ListController, UserController],
+  providers: [TodoService, ListService, UserService],
 })
 export class TodoModule { }
