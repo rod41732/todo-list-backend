@@ -4,7 +4,6 @@ export const TodoSchema = new Schema({
   ownerId: {
     // TODO foreign key check
     type: SchemaTypes.ObjectId,
-
     required: true,
   },
   listId: {

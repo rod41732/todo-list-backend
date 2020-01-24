@@ -24,17 +24,17 @@ export class TodoController {
     } 
 
     @Get(':id')
-    getTodoById(@Param('id') id: String): Promise<Todo> {
+    async getTodoById(@Param('id') id: String): Promise<Todo> {
       return this.todoService.findById(id);
     }
 
     @Patch(':id')
     async updateTodo(
-      @Param(':id') id: String,
+      @Param('id') id: String,
       @Body() todo: Partial<Todo>
     ) {
-      console.log(todo);
-      return await this.todoService.updateById(id, todo);
+      console.log(id, todo);
+      return this.todoService.updateById(id, todo);
     } 
 
     @Delete(':id')

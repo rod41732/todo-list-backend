@@ -7,6 +7,6 @@ export interface Todo extends Document {
   created: Date,
   isTrash: Boolean,
   isCompleted: Boolean,
-  urgency: String,
+  urgency: Number,
   text: String,
 };
