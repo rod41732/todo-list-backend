@@ -1,7 +1,9 @@
-import { Controller, Get, Patch, Param, Body, Post, Delete } from '@nestjs/common';
+import { Controller, Get, Patch, Param, Body, Post, Delete, ValidationPipe, UsePipes, HttpException, HttpStatus } from '@nestjs/common';
 import { ListService } from './list.service';
-import { List } from 'src/interfaces/list.interface';
+import { List } from './list';
 import { TodoService } from 'src/todo/todo.service';
+import { createListDto } from './dto/createList.dto';
+import { updateListDto } from './dto/updateListDto';
 
 @Controller('labels')
 export class ListController {
@@ -16,30 +18,46 @@ export class ListController {
   }
 
   @Patch(':id') 
+  @UsePipes(new ValidationPipe({
+    whitelist: true,
+  }))
   updateList(
     @Param('id') id: String, 
-    @Body() list: List,
+    @Body() updateListDto: updateListDto,
   ): Promise<List> {
-    return this.listService.updateList(id, list);
+    return this.listService.updateList(id, updateListDto);
   }
 
   @Post()
+  @UsePipes(new ValidationPipe({
+    whitelist: true,
+  }))
   createList(
-    @Body() list: List,
+    @Body() createListDto: createListDto,
   ): Promise<List> {
-    return this.listService.createList(list);
+    //createListDto.ownerId = "foo"; 
+    return this.listService.createList(createListDto);
   }
 
   @Delete(':id')
   async deleteById(
-    @Param() id: String,
+    @Param('id') id: String,
   ): Promise<any> {
-    try {
-      await this.todoService.deleteByListId(id);
-      await this.listService.deleteById(id);
-      return true;
+    const {deletedCount: listDeleted} = await this.listService.deleteById(id);
+    if (listDeleted === 0) {
+      throw new HttpException("List not found", HttpStatus.NOT_FOUND);
+    }
+    try { 
+      const {deletedCount: todoDeleted} = await this.todoService.deleteByListId(id);
+      return {
+        ok: true,
+        todoDeleted,
+      };
     } catch (err) {
-      return false;
+      return {
+        ok: false,
+        err,
+      }
     }
   }
 }

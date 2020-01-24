@@ -1,4 +1,23 @@
-import { SchemaTypes, Schema, SchemaType }from 'mongoose';
+import { SchemaTypes, Schema, SchemaType, Document }from 'mongoose';
+
+
+enum Urgency {
+  None = 0,
+  Low = 1,
+  Medium = 2,
+  High = 3,
+}
+
+export class Todo extends Document {
+  ownerId: String;
+  listId: String;
+  sharedWith: String[];
+  created: Date;
+  isTrash: Boolean;
+  isCompleted: Boolean;
+  urgency: Number;
+  text: String;
+}
 
 export const TodoSchema = new Schema({
   ownerId: {

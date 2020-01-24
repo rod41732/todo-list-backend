@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { List } from 'src/interfaces/list.interface';
+import { List } from './list';
+import { createListDto } from './dto/createList.dto';
 
 @Injectable()
 export class ListService {
@@ -13,7 +14,7 @@ export class ListService {
     return this.list.find();
   }
 
-  async createList(list: Partial<List>): Promise<List> {
+  async createList(list: createListDto): Promise<List> {
     return this.list.create(list);
   }
 
@@ -21,8 +22,8 @@ export class ListService {
     return this.list.findByIdAndUpdate(id, list);
   }
   
-  async deleteById(id: String): Promise<List> {
-    return this.list.findByIdAndDelete(id);
+  async deleteById(id: String) {
+    return this.list.deleteOne({_id: id});
   }
 }
 

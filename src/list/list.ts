@@ -1,14 +1,13 @@
-import { Document } from "mongoose";
+import { Document, Schema, SchemaTypes } from "mongoose";
 
-export interface List extends Document {
-  owner: String,
-  name: String, 
+export class List extends Document {
+  ownerId: String;
+  name: String;
 }
 
-import { SchemaType, Schema, SchemaTypes } from "mongoose";
 
 export const ListSchema = new Schema({
-  owner: SchemaTypes.ObjectId,
+  ownerId: SchemaTypes.ObjectId,
   name: {
     type: String,
     required: true,

@@ -1,6 +1,9 @@
-import { Controller, Body, Post, Get, Patch, Param, Options, Delete } from '@nestjs/common';
+import { Controller, Body, Post, Get, Patch, Param, Options, Delete, UsePipes, ValidationPipe } from '@nestjs/common';
 import { TodoService } from './todo.service';
-import { Todo } from 'src/interfaces/todo.interface';
+import { Todo } from './todo';
+import { createTodoDto } from './dto/createTodo.dto';
+import { updateTodoDto } from './dto/updateTodo.dto';
+import { createListDto } from 'src/list/dto/createList.dto';
 
 @Controller('todos')
 export class TodoController {
@@ -14,8 +17,12 @@ export class TodoController {
     }
 
     @Post() 
-    createToDo(@Body() body: Partial<Todo>): Promise<Todo> {
-      return this.todoService.createTodo(body);
+    @UsePipes(new ValidationPipe({
+      whitelist: true,
+    }))
+    createToDo(@Body() createTodoDto: createTodoDto): Promise<Todo> {
+      createTodoDto.ownerId = "123456789012345678901234";
+      return this.todoService.createTodo(createTodoDto);
     }
 
     @Get()
@@ -31,9 +38,8 @@ export class TodoController {
     @Patch(':id')
     async updateTodo(
       @Param('id') id: String,
-      @Body() todo: Partial<Todo>
+      @Body() todo: updateTodoDto,
     ) {
-      console.log(id, todo);
       return this.todoService.updateById(id, todo);
     } 
 

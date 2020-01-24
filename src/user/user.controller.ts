@@ -1,8 +1,12 @@
-import { Controller, Get, Body, Post, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Body, Post, ValidationPipe, Res, UsePipes, UseGuards, Req } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from 'src/interfaces/user.interface';
 import * as bcrypt from "bcrypt";
-import * as jwt from "jsonwebtoken";
+import { createUserDto } from './dto/createUser.dto';
+import { loginDto } from "./dto/login.dto";
+import { Response, Request } from 'express';
+import { sign} from "jsonwebtoken";
+import { AuthGuard } from "@nestjs/passport";
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('user')
 export class UserController {
@@ -10,24 +14,15 @@ export class UserController {
     private userService: UserService,
   ) {}
   
+  @UsePipes(new ValidationPipe({
+    whitelist: true,
+  }))
   @Post('/register') 
-  createUser(
-    @Body() user: User,
+  async createUser(
+    @Body() user: createUserDto,
   ) {
+    user.password = await bcrypt.hash(user.password, 10);
     return this.userService.createUser(user);
-  }
-  
-  @Post('/login')
-  async loginUser(
-    @Body() user: User
-  ) {
-    const foundUser = await this.userService.findByUsername(user.username);
-    const match = await bcrypt.compare(user.password, foundUser.password.toString());
-    if (match) {
-      return "OK"
-    } else {
-      throw new HttpException("bad password", HttpStatus.UNAUTHORIZED);
-    }
   }
 
   @Get()
