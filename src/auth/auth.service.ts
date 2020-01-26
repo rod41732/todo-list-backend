@@ -24,9 +24,9 @@ export class AuthService {
   }
 
   // this is merely a service for converting req.user (which is set by AuthGuard('local'))
-  // it's called manually in controller
+  // it's called manually in controller, it's up to user to use this token
   async login(user: any) {
-    const payload = {username: user.username};
+    const payload = {id: user._id};
     return {
       access_token: this.jwtService.sign(payload),
     };

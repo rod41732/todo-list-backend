@@ -18,7 +18,10 @@ export class AuthController {
   ) {
     const result = await this.authService.login(req.user);
     const {access_token} = result as any;
-    res.cookie('token', access_token).send(result);
+    res.cookie('token', access_token).send({
+      access_token,
+      id: (req.user as any)._id,
+    });
     // return res.header('Authorization', `Bearer ${access_token}`).send(result);
   }
 
