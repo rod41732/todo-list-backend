@@ -1,11 +1,10 @@
-import { SchemaTypes, Schema, SchemaType, Document }from 'mongoose';
-
+import { SchemaTypes, Schema, Document } from "mongoose";
 
 enum Urgency {
   None = 0,
   Low = 1,
   Medium = 2,
-  High = 3,
+  High = 3
 }
 
 export class Todo extends Document {
@@ -23,35 +22,35 @@ export const TodoSchema = new Schema({
   ownerId: {
     // TODO foreign key check
     type: SchemaTypes.ObjectId,
-    required: true,
+    required: true
   },
   listId: {
-    type: SchemaTypes.ObjectId,
+    type: SchemaTypes.ObjectId
   },
   sharedWith: {
     type: [SchemaTypes.ObjectId],
-    default: [],
+    default: []
   },
   created: {
     type: Date,
-    default: Date.now,
+    default: Date.now
   },
   isTrash: {
     type: Boolean,
-    default: false,
+    default: false
   },
   isCompleted: {
     type: Boolean,
-    default: false,
+    default: false
   },
   urgency: {
     type: Number,
     required: true,
     min: 0,
-    max: 3,
+    max: 3
   },
   text: {
     type: String,
-    required: true,
-  },
-})
+    required: true
+  }
+});

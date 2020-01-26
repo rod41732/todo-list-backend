@@ -1,21 +1,18 @@
-import { Injectable, Post } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { User } from './user';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { User } from "./user";
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectModel('User') private readonly userModel: Model<User>,
-  ) {}
+  constructor(@InjectModel("User") private readonly userModel: Model<User>) {}
 
-  
   async createUser(user: Partial<User>): Promise<User> {
     return this.userModel.create(user);
   }
-  
+
   async findByUsername(username: String): Promise<User> {
-    return this.userModel.findOne({username})
+    return this.userModel.findOne({ username });
   }
 
   async findAll(): Promise<User[]> {

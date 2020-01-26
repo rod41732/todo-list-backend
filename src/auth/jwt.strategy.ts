@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
-import { Strategy, ExtractJwt } from "passport-jwt";
+import { Strategy } from "passport-jwt";
 import { Request } from "express";
 import { config } from "src/config";
 
@@ -16,12 +16,12 @@ export class JWTStrategy extends PassportStrategy(Strategy) {
         }
       },
       ignoreExpiration: false,
-      secretOrKey: config.jwtSecret,
-    })
+      secretOrKey: config.jwtSecret
+    });
   }
 
   // payload = JWT decoded from request's header
   async validate(payload: any) {
-    return {user: payload.id};
+    return { user: payload.id };
   }
 }

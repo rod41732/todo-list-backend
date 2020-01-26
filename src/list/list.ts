@@ -5,14 +5,13 @@ export class List extends Document {
   name: String;
 }
 
-
 export const ListSchema = new Schema({
   ownerId: {
     type: SchemaTypes.ObjectId,
-    required: true,
+    required: true
   },
   name: {
     type: String,
-    required: true,
-  },
-})
+    required: true
+  }
+});

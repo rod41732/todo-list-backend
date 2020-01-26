@@ -1,38 +1,53 @@
-import { Controller, Get, Patch, Param, Body, Post, Delete, ValidationPipe, UsePipes, HttpException, HttpStatus, UseGuards, Req, NotFoundException } from '@nestjs/common';
-import { ListService } from './list.service';
-import { List } from './list';
-import { TodoService } from 'src/todo/todo.service';
-import { createListDto } from './dto/createList.dto';
-import { updateListDto } from './dto/updateListDto';
-import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
+import {
+  Controller,
+  Get,
+  Patch,
+  Param,
+  Body,
+  Post,
+  Delete,
+  UseGuards,
+  Req,
+  NotFoundException
+} from "@nestjs/common";
+import { ListService } from "./list.service";
+import { List } from "./list";
+import { TodoService } from "src/todo/todo.service";
+import { createListDto } from "./dto/createList.dto";
+import { updateListDto } from "./dto/updateListDto";
+import { AuthGuard } from "@nestjs/passport";
+import { Request } from "express";
 
-@Controller('labels')
-@UseGuards(AuthGuard('jwt'))
+@Controller("labels")
+@UseGuards(AuthGuard("jwt"))
 export class ListController {
   constructor(
     private readonly listService: ListService,
-    private readonly todoService: TodoService,
+    private readonly todoService: TodoService
   ) {}
-  
-  @Get() 
-  findAll(
-    @Req() req: Request,
-  ): Promise<List[]> {
+
+  @Get()
+  findAll(@Req() req: Request): Promise<List[]> {
     const { user } = req.user as any;
     return this.listService.findByOwner(user);
   }
 
-  @Patch(':id')
+  @Patch(":id")
   async updateList(
-    @Param('id') id: String, 
+    @Param("id") id: String,
     @Body() updateListDto: updateListDto,
-    @Req() req: Request,
+    @Req() req: Request
   ): Promise<any> {
     const { user } = req.user as any;
-    const updatedList = await this.listService.updateList(id, user, updateListDto);
+    const updatedList = await this.listService.updateList(
+      id,
+      user,
+      updateListDto
+    );
     if (updatedList === null) {
-      throw new NotFoundException("Either list doesn't exist, or you don't have permission to do that");
+      throw new NotFoundException(
+        "Either list doesn't exist, or you don't have permission to do that"
+      );
     }
     return updatedList;
   }
@@ -40,28 +55,30 @@ export class ListController {
   @Post()
   createList(
     @Body() createListDto: createListDto,
-    @Req() req: Request, 
+    @Req() req: Request
   ): Promise<List> {
     const { user } = req.user as any;
-    createListDto.ownerId = user; 
+    createListDto.ownerId = user;
     return this.listService.createList(createListDto);
   }
 
-  @Delete(':id')
-  async deleteById(
-    @Param('id') id: String,
-    @Req() req: Request,
-  ): Promise<any> {
+  @Delete(":id")
+  async deleteById(@Param("id") id: String, @Req() req: Request): Promise<any> {
     const { user } = req.user as any;
-    const { deletedCount} = await this.listService.deleteById(id, user);
+    const { deletedCount } = await this.listService.deleteById(id, user);
     if (deletedCount === 0) {
-      throw new NotFoundException("Either list doesn't exist, or you don't have permission to do that");
+      throw new NotFoundException(
+        "Either list doesn't exist, or you don't have permission to do that"
+      );
     }
-    const {deletedCount: todoDeleted} = await this.todoService.deleteByListId(id, user);
+    const { deletedCount: todoDeleted } = await this.todoService.deleteByListId(
+      id,
+      user
+    );
     return {
       statusCode: 200,
-      message: 'OK',
-      todoDeleted,
+      message: "OK",
+      todoDeleted
     };
   }
 }

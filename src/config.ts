@@ -1,9 +1,9 @@
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 export const config = {
   jwtSecret: process.env.SECRET,
   dbName: process.env.DB_NAME,
-  port: process.env.PORT,
+  port: process.env.PORT
 };

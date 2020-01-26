@@ -1,25 +1,36 @@
-import { IsEmpty, IsNotEmpty, IsString, IsDate, IsBoolean, IsNumber, Min, Max, IsOptional, Length, IsNumberString, IsArray } from "class-validator";
+import {
+  IsEmpty,
+  IsNotEmpty,
+  IsString,
+  IsBoolean,
+  IsNumber,
+  Min,
+  Max,
+  IsOptional,
+  Length,
+  IsArray
+} from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class createTodoDto {
   ownerId: String;
 
   @ApiPropertyOptional({
-    description: "list id this item belong to",
+    description: "list id this item belong to"
   })
   @IsOptional()
   @Length(24)
   listId: String;
 
   @ApiPropertyOptional({
-    description: "list people to share with",
+    description: "list people to share with"
   })
   @IsOptional()
   @IsArray()
   @IsString({
-    each: true,
+    each: true
   })
-  @Length(24, 24, {each: true})
+  @Length(24, 24, { each: true })
   sharedWith: [String];
 
   @IsEmpty()
@@ -28,13 +39,13 @@ export class createTodoDto {
   @IsOptional()
   @IsBoolean()
   isTrash: Boolean;
-  
+
   @IsOptional()
   @IsBoolean()
   isCompleted: Boolean;
-  
+
   @ApiProperty({
-    description: "importance of todo",
+    description: "importance of todo"
   })
   @IsNumber()
   @Min(0)
@@ -42,9 +53,8 @@ export class createTodoDto {
   urgency: Number;
 
   @ApiProperty({
-    description: "text of todo",
+    description: "text of todo"
   })
   @IsNotEmpty()
-  text: String; 
+  text: String;
 }
-

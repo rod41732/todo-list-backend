@@ -2,7 +2,6 @@ import { IsNotEmpty } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class updateListDto {
-
   @ApiProperty()
   @IsNotEmpty()
   name: string;

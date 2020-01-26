@@ -1,4 +1,10 @@
-import { IsEmpty, IsNotEmpty, IsString, IsDate, IsBoolean, IsNumber, Min, Max } from "class-validator";
+import {
+  IsNotEmpty,
+  IsBoolean,
+  IsNumber,
+  Min,
+  Max
+} from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class updateTodoDto {
@@ -19,11 +25,11 @@ export class updateTodoDto {
   @ApiProperty()
   @IsBoolean()
   isTrash: Boolean;
-  
+
   @ApiProperty()
   @IsBoolean()
   isCompleted: Boolean;
-  
+
   @ApiProperty()
   @IsNumber()
   @Min(0)
@@ -32,6 +38,5 @@ export class updateTodoDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  text: String; 
+  text: String;
 }
-
