@@ -13,23 +13,27 @@ export class TodoService {
     return createdTodo.save();
   }
 
+  async findByOwner(ownerId: String): Promise<Todo[]> {
+    return this.todoModel.find({ownerId});
+  } 
+
   async findAll(): Promise<Todo[]> {
     return this.todoModel.find();
   }
   
-  async findById(id: String) {
-    return this.todoModel.findById(id);
+  // async findById(id: String) {
+  //   return this.todoModel.findById(id);
+  // }
+
+  async deleteByListId(listId, ownerId: String) {
+    return this.todoModel.deleteMany({listId, ownerId});
   }
 
-  async deleteByListId(id: String) {
-    return this.todoModel.deleteMany({listId: id});
+  async deleteById(_id: String, ownerId: String) {
+    return this.todoModel.deleteMany({_id, ownerId});
   }
 
-  async deleteById(id: String) {
-    return this.todoModel.findByIdAndDelete(id);
-  }
-
-  async updateById(id: String, updateTodo: Partial<Todo>) {
-    return this.todoModel.findOneAndUpdate({_id: id}, updateTodo);
+  async updateById(_id: String, ownerId: String, updateTodo: Partial<Todo>) {
+    return this.todoModel.updateOne({_id, ownerId}, updateTodo);
   }
 }
