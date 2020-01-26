@@ -33,4 +33,5 @@ jobs:
                yarn start
           "
           echo $CMD
+          cat private_key.cer
           ssh -oStrictHostKeyChecking=no -i private_key.cer "$ADDRESS" 'bash --login -i -c "'$CMD'"'
