@@ -1,7 +1,8 @@
-import { Controller, UseGuards, Post, Req, Get, Res } from '@nestjs/common';
+import { Controller, UseGuards, Post, Req, Get, Res, Body } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
+import { loginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -15,6 +16,7 @@ export class AuthController {
   async loginUser(
     @Req() req: Request,
     @Res() res: Response,
+    @Body() _: loginDto,
   ) {
     const result = await this.authService.login(req.user);
     const {access_token} = result as any;

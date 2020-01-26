@@ -7,7 +7,10 @@ export class List extends Document {
 
 
 export const ListSchema = new Schema({
-  ownerId: SchemaTypes.ObjectId,
+  ownerId: {
+    type: SchemaTypes.ObjectId,
+    required: true,
+  },
   name: {
     type: String,
     required: true,

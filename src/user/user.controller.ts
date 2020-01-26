@@ -1,12 +1,7 @@
-import { Controller, Get, Body, Post, ValidationPipe, Res, UsePipes, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Body, Post, ValidationPipe, Res, UsePipes, UseGuards, Req, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { UserService } from './user.service';
 import * as bcrypt from "bcrypt";
 import { createUserDto } from './dto/createUser.dto';
-import { loginDto } from "./dto/login.dto";
-import { Response, Request } from 'express';
-import { sign} from "jsonwebtoken";
-import { AuthGuard } from "@nestjs/passport";
-import { AuthService } from 'src/auth/auth.service';
 
 @Controller('user')
 export class UserController {
@@ -14,15 +9,21 @@ export class UserController {
     private userService: UserService,
   ) {}
   
-  @UsePipes(new ValidationPipe({
-    whitelist: true,
-  }))
   @Post('/register') 
   async createUser(
     @Body() user: createUserDto,
   ) {
     user.password = await bcrypt.hash(user.password, 10);
-    return this.userService.createUser(user);
+    try {
+      return await this.userService.createUser(user);
+    } catch (err) {
+        console.log(`Register: Username ${user.username} already exist`);
+      if (err.code === 11000) { 
+        throw new BadRequestException(`Username ${user.username} already exist`);
+      }
+      console.error(err);
+      throw new InternalServerErrorException('Something went wrong');
+    }
   }
 
   @Get()

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Todo } from './todo';
-import { TodoSchema } from "./todo";
+
 
 @Injectable()
 export class TodoService {
@@ -20,12 +20,8 @@ export class TodoService {
   async findAll(): Promise<Todo[]> {
     return this.todoModel.find();
   }
-  
-  // async findById(id: String) {
-  //   return this.todoModel.findById(id);
-  // }
 
-  async deleteByListId(listId, ownerId: String) {
+  async deleteByListId(listId: String, ownerId: String) {
     return this.todoModel.deleteMany({listId, ownerId});
   }
 
@@ -33,7 +29,9 @@ export class TodoService {
     return this.todoModel.deleteMany({_id, ownerId});
   }
 
-  async updateById(_id: String, ownerId: String, updateTodo: Partial<Todo>) {
-    return this.todoModel.updateOne({_id, ownerId}, updateTodo);
+  async updateById(_id: String, ownerId: String, updateTodo: Partial<Todo>): Promise<Todo | null> {
+    const foundTodo = await this.todoModel.findOne({_id, ownerId});
+    if (!foundTodo) return null;
+    return await foundTodo.set(updateTodo).save();
   }
 }

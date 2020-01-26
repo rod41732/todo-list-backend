@@ -1,11 +1,14 @@
-import { Controller, Get, Patch, Param, Body, Post, Delete, ValidationPipe, UsePipes, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Patch, Param, Body, Post, Delete, ValidationPipe, UsePipes, HttpException, HttpStatus, UseGuards, Req, NotFoundException } from '@nestjs/common';
 import { ListService } from './list.service';
 import { List } from './list';
 import { TodoService } from 'src/todo/todo.service';
 import { createListDto } from './dto/createList.dto';
 import { updateListDto } from './dto/updateListDto';
+import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 
 @Controller('labels')
+@UseGuards(AuthGuard('jwt'))
 export class ListController {
   constructor(
     private readonly listService: ListService,
@@ -13,51 +16,52 @@ export class ListController {
   ) {}
   
   @Get() 
-  findAll(): Promise<List[]> {
-    return this.listService.findAll();
+  findAll(
+    @Req() req: Request,
+  ): Promise<List[]> {
+    const { user } = req.user as any;
+    return this.listService.findByOwner(user);
   }
 
-  @Patch(':id') 
-  @UsePipes(new ValidationPipe({
-    whitelist: true,
-  }))
-  updateList(
+  @Patch(':id')
+  async updateList(
     @Param('id') id: String, 
     @Body() updateListDto: updateListDto,
-  ): Promise<List> {
-    return this.listService.updateList(id, updateListDto);
+    @Req() req: Request,
+  ): Promise<any> {
+    const { user } = req.user as any;
+    const updatedList = await this.listService.updateList(id, user, updateListDto);
+    if (updatedList === null) {
+      throw new NotFoundException("Either list doesn't exist, or you don't have permission to do that");
+    }
+    return updatedList;
   }
 
   @Post()
-  @UsePipes(new ValidationPipe({
-    whitelist: true,
-  }))
   createList(
     @Body() createListDto: createListDto,
+    @Req() req: Request, 
   ): Promise<List> {
-    //createListDto.ownerId = "foo"; 
+    const { user } = req.user as any;
+    createListDto.ownerId = user; 
     return this.listService.createList(createListDto);
   }
 
   @Delete(':id')
   async deleteById(
     @Param('id') id: String,
+    @Req() req: Request,
   ): Promise<any> {
-    const {deletedCount: listDeleted} = await this.listService.deleteById(id);
-    if (listDeleted === 0) {
-      throw new HttpException("List not found", HttpStatus.NOT_FOUND);
+    const { user } = req.user as any;
+    const { deletedCount} = await this.listService.deleteById(id, user);
+    if (deletedCount === 0) {
+      throw new NotFoundException("Either list doesn't exist, or you don't have permission to do that");
     }
-    try { 
-      const {deletedCount: todoDeleted} = await this.todoService.deleteByListId(id);
-      return {
-        ok: true,
-        todoDeleted,
-      };
-    } catch (err) {
-      return {
-        ok: false,
-        err,
-      }
-    }
+    const {deletedCount: todoDeleted} = await this.todoService.deleteByListId(id, user);
+    return {
+      statusCode: 200,
+      message: 'OK',
+      todoDeleted,
+    };
   }
 }
