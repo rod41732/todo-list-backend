@@ -30,7 +30,8 @@ jobs:
                nvm use --lts &&
                yarn &&
                (yarn build | tee build.log) && ./line-notify.sh '$LINE_NOTIFY_TOKEN' 'branch: $BRANCH build success' || (./line-notify.sh '$LINE_NOTIFY_TOKEN' 'branch: $BRANCH failed:\n'\$(cat -s build.log | tail -10) && false) &&
-               yarn start
+               pm2 restart todo-app-backend-$BRANCH
+
           "
           echo $CMD
           ssh -oStrictHostKeyChecking=no -i private_key.cer "$ADDRESS" 'bash --login -i -c "'$CMD'"'
